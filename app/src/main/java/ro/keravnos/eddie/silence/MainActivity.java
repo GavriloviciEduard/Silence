@@ -7,7 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+{
 
     private TextView mTextMessage;
 
@@ -17,11 +18,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected( @NonNull MenuItem item ) {
             switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_home);
-                    return true;
                 case R.id.navigation_dashboard:
-                    mTextMessage.setText(R.string.title_dashboard);
+                    mTextMessage.setText("Ceva");
+                    return true;
+                case R.id.navigation_home:
+                    mTextMessage.setText("Home");
                     return true;
                 case R.id.navigation_notifications:
                     mTextMessage.setText(R.string.title_notifications);
@@ -32,7 +33,9 @@ public class MainActivity extends AppCompatActivity {
     };
 
     @Override
-    protected void onCreate( Bundle savedInstanceState ) {
+    protected void onCreate( Bundle savedInstanceState )
+    {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
