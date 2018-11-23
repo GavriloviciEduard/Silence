@@ -1,22 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
     <item
 
         android:id="@+id/locations"
+        android:checked="true"
         android:icon="@drawable/ic_location"
-        android:title="@string/locations" />
+        android:title="@string/locations"
+        app:showAsAction="ifRoom"/>
 
 
     <item
         android:id="@+id/map"
+        android:checked="false"
         android:icon="@drawable/ic_map"
-        android:title="@string/map" />
+        android:title="@string/map"
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/settings"
+        android:checked="false"
         android:icon="@drawable/ic_settings"
-        android:title="@string/settings" />
+        android:title="@string/settings"
+        app:showAsAction="ifRoom"/>
 
 </menu>
