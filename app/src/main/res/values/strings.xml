@@ -3,5 +3,7 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
-    <string name="map"> Map </string>
+    <string name="map"> Map </string> // string for map name
+    <string name="locations"> Locations </string> // string for locations name
+    <string name="settings"> Settings </string> // string for settings name
 </resources>
