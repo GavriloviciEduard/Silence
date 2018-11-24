@@ -102,5 +102,6 @@ public class MainActivity extends AppCompatActivity
         adapter.addFragment(mapFragment);
         adapter.addFragment(settingsFragment);
         viewPager.setAdapter(adapter);
+        viewPager.setCurrentItem(1);
     }
 }

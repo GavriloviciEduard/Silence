@@ -19,11 +19,11 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="height" value="32" />
-                            <entry key="outputName" value="settings" />
+                            <entry key="height" value="1000" />
+                            <entry key="outputName" value="ic_icon" />
                             <entry key="overrideSize" value="true" />
-                            <entry key="sourceFile" value="C:\Users\Eddie\Desktop\settings\SVG\wrench.svg" />
-                            <entry key="width" value="32" />
+                            <entry key="sourceFile" value="C:\Users\Eddie\Desktop\icon.svg" />
+                            <entry key="width" value="1000" />
                           </map>
                         </option>
                       </PersistentState>
