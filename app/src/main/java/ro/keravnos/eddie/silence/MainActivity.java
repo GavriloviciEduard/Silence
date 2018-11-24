@@ -32,9 +32,14 @@ public class MainActivity extends AppCompatActivity
 
         setContentView(R.layout.activity_main);
 
-        viewPager = (ViewPager)findViewById(R.id.viewpager);
 
-        bottomNavigationView = (BottomNavigationView)findViewById(R.id.bottom_navigation);
+        viewPager = findViewById(R.id.viewpager);
+        //BottomNavigationView navigation =  findViewById(R.id.bottom_navigation);
+        //Integer indexItem = 1;
+        //navigation.getMenu().getItem(indexItem).setChecked(true);
+
+       bottomNavigationView = findViewById(R.id.bottom_navigation);
+       bottomNavigationView.getMenu().getItem(1).setChecked(true);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener()
         {

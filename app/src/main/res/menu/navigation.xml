@@ -6,7 +6,7 @@
     <item
 
         android:id="@+id/locations"
-        android:checked="true"
+        android:checked="false"
         android:icon="@drawable/ic_location"
         android:title="@string/locations"
         app:showAsAction="ifRoom"/>
