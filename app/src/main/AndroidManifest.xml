@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="ro.keravnos.eddie.silence">
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
 
         android:allowBackup="true"
@@ -11,7 +14,10 @@
         android:roundIcon="@drawable/ic_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning">
+        tools:ignore="GoogleAppIndexin]gWarning">
+
+        <uses-library android:name="com.google.android.maps" android:required="true" />
+        <uses-library android:name="org.apache.http.legacy" android:required="false" />
 
         <activity
             android:name=".MainActivity"
@@ -24,6 +30,10 @@
         </activity>
 
         <service android:name=".Model.Notifications"></service>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAj8Coc2cpWkf1D2xhrJA_ydgf8Zq8ycv4" />
 
     </application>
 

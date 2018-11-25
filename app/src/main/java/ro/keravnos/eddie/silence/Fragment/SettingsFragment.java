@@ -21,6 +21,7 @@ import ro.keravnos.eddie.silence.R;
 
 public class SettingsFragment extends Fragment
 {
+
     public SettingsFragment()
     {
 
