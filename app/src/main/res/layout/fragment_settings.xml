@@ -5,11 +5,20 @@
     tools:context="ro.keravnos.eddie.silence.Fragment.SettingsFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/settings"
-        android:layout_centerInParent="true"
-        android:textSize="30sp" />
 
+    <Switch
+        android:id="@+id/notifications_switch"
+        android:layout_width="343dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="37dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="40dp"
+        android:checked="false"
+        android:text="@string/notification_switch_description"
+        android:visibility="visible"
+        tools:checked="false" />
 </RelativeLayout>
