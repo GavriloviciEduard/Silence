@@ -1,11 +1,16 @@
 package ro.keravnos.eddie.silence.Fragment;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.NotificationManager;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -24,42 +29,41 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import ro.keravnos.eddie.silence.R;
 
-public class MapFragment extends Fragment
-{
+public class MapFragment extends Fragment {
     public MapView mMapView;
     public GoogleMap googleMap;
 
-    public MapFragment()
-    {
+    public MapFragment() {
 
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
-        View rootView =inflater.inflate(R.layout.fragment_map,container,false);
+    public View onCreateView( @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
+        View rootView = inflater.inflate(R.layout.fragment_map, container, false);
         mMapView = rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
 
         mMapView.onResume();
 
-        try
-        {
+        try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        mMapView.getMapAsync(new OnMapReadyCallback()
-        {
+        mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
-            public void onMapReady(final GoogleMap mMap)
-            {
+            public void onMapReady( final GoogleMap mMap ) {
 
                 googleMap = mMap;
 
+
+                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                {
+                    ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                    ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+
+                }
                 googleMap.setMyLocationEnabled(true);
 
                 LatLng Sydney = new LatLng(-34,151);
@@ -99,12 +103,6 @@ public class MapFragment extends Fragment
     {
         super.onLowMemory();
         mMapView.onLowMemory();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        mMapView.onDestroy();
     }
 
 }

@@ -30,15 +30,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        boolean ok = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
-        if(Build.VERSION.SDK_INT >= 23)
-        {
-            if(!ok)
-            {
-                Permission();
-            }
-        }
 
         Intent serviceIntent = new Intent(this, Notifications.class);
         startService(serviceIntent);
@@ -52,9 +44,5 @@ public class MainActivity extends AppCompatActivity
         bot.create(v,bottomNavigationView, viewPager);
     }
 
-    private void Permission()
-    {
-        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-        startActivity(intent);
-    }
+
 }
