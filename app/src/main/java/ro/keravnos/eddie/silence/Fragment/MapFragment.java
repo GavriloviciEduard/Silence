@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -23,18 +22,21 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import ro.keravnos.eddie.silence.R;
 
-import static android.support.v4.content.ContextCompat.getSystemService;
 
 public class MapFragment extends Fragment
 {
     public MapView mMapView;
     public GoogleMap googleMap;
     public static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    Marker last_location_marker=null;
 
 
     public MapFragment()
@@ -64,8 +66,50 @@ public class MapFragment extends Fragment
                 LatLng myPosition = new LatLng(latitude, longitude);
 
 
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(myPosition).zoom(20).build();
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(myPosition).zoom(17).build();
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+
+
+                googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener()
+                {
+
+                    @Override
+                    public void onMapLongClick(LatLng point)
+                    {
+                        if (last_location_marker != null)
+                        {
+                            last_location_marker.setPosition(point);
+
+                            Toast.makeText(getContext(),"AT:-> " + point.toString(), Toast.LENGTH_LONG).show();
+                        }
+
+                        else
+                        {
+
+                            last_location_marker = googleMap.addMarker(new MarkerOptions().position
+                                    (new LatLng(point.latitude
+                                    ,point.longitude))
+                                    .draggable(true).visible(true).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+
+                            Toast.makeText(getContext(),"AT:-> " + point.toString(), Toast.LENGTH_LONG).show();
+
+                        }
+
+                    }
+                });
+
+
+                googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener()
+                {
+                    @Override
+                    public void onMapClick( LatLng latLng )
+                    {
+                            googleMap.clear();
+                            last_location_marker = null;
+                    }
+                });
+
             }
         });
     }
@@ -161,7 +205,7 @@ public class MapFragment extends Fragment
                 {
                     Toast.makeText(getActivity().getApplicationContext(), "Location Permission denied", Toast.LENGTH_SHORT).show();
                 }
-                return;
+
             }
         }
     }
