@@ -31,7 +31,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
 
-
         Intent serviceIntent = new Intent(this, Notifications.class);
         startService(serviceIntent);
 
@@ -44,5 +43,9 @@ public class MainActivity extends AppCompatActivity
         bot.create(v,bottomNavigationView, viewPager);
     }
 
-
+    private void Permission()
+    {
+        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        startActivity(intent);
+    }
 }
