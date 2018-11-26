@@ -2,6 +2,7 @@ package ro.keravnos.eddie.silence.Fragment;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -50,6 +51,7 @@ public class MapFragment extends Fragment
     public static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     Marker last_location_marker=null;
     LocationManager mLocationManager;
+    View rootView;
 
     private Location getLastKnownLocation()
     {
@@ -80,6 +82,19 @@ public class MapFragment extends Fragment
 
     }
 
+    public void pop_up_adress()
+    {
+
+        View surfaceView =  rootView.findViewById(R.id.surface_view);
+        surfaceView.setVisibility(View.VISIBLE);
+    }
+
+    public void destroy_pop_up_adress()
+    {
+        View surfaceView =  rootView.findViewById(R.id.surface_view);
+        surfaceView.setVisibility(View.INVISIBLE);
+    }
+
 
 
     public void set_map()
@@ -104,6 +119,7 @@ public class MapFragment extends Fragment
                     double longitude = location.getLongitude();
                     LatLng myPosition = new LatLng(latitude, longitude);
 
+
                     CameraPosition cameraPosition = new CameraPosition.Builder().target(myPosition).zoom(17).build();
                     googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                 }
@@ -121,6 +137,7 @@ public class MapFragment extends Fragment
                             last_location_marker.setPosition(point);
 
                             Toast.makeText(getContext(),"AT:-> " + point.toString(), Toast.LENGTH_LONG).show();
+                            pop_up_adress();
                         }
 
                         else
@@ -132,6 +149,7 @@ public class MapFragment extends Fragment
                                     .draggable(true).visible(true).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
 
                             Toast.makeText(getContext(),"AT:-> " + point.toString(), Toast.LENGTH_LONG).show();
+                            pop_up_adress();
 
                         }
 
@@ -146,6 +164,7 @@ public class MapFragment extends Fragment
                     {
                             googleMap.clear();
                             last_location_marker = null;
+                            destroy_pop_up_adress();
                     }
                 });
 
@@ -169,7 +188,7 @@ public class MapFragment extends Fragment
     public View onCreateView( @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState )
     {
 
-        View rootView = inflater.inflate(R.layout.fragment_map, container, false);
+        rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
         mMapView = rootView.findViewById(R.id.mapView);
 
