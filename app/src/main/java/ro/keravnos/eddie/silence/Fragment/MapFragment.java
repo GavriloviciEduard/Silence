@@ -2,15 +2,10 @@ package ro.keravnos.eddie.silence.Fragment;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -18,29 +13,20 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
-
-
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
 import java.util.List;
-
+import java.util.Objects;
 import ro.keravnos.eddie.silence.R;
-
 import static android.content.Context.LOCATION_SERVICE;
 
 
@@ -55,7 +41,9 @@ public class MapFragment extends Fragment
 
     private Location getLastKnownLocation()
     {
-        mLocationManager = (LocationManager)getContext().getSystemService(LOCATION_SERVICE);
+
+
+        mLocationManager = (LocationManager)Objects.requireNonNull(getContext()).getSystemService(LOCATION_SERVICE);
         List<String> providers = mLocationManager.getProviders(true);
         Location bestLocation = null;
         for (String provider : providers)
@@ -85,14 +73,14 @@ public class MapFragment extends Fragment
     public void pop_up_adress()
     {
 
-        View surfaceView =  rootView.findViewById(R.id.surface_view);
-        surfaceView.setVisibility(View.VISIBLE);
+        View win =  rootView.findViewById(R.id.down);
+        win.setVisibility(View.VISIBLE);
     }
 
     public void destroy_pop_up_adress()
     {
-        View surfaceView =  rootView.findViewById(R.id.surface_view);
-        surfaceView.setVisibility(View.INVISIBLE);
+        View win =  rootView.findViewById(R.id.down);
+        win.setVisibility(View.INVISIBLE);
     }
 
 
@@ -173,15 +161,6 @@ public class MapFragment extends Fragment
 
 
 
-        View locationButton = ((View)mMapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
-        // and next place it, on bottom right (as Google Maps app)
-        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)
-                locationButton.getLayoutParams();
-        // position on right bottom
-        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
-        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-        layoutParams.setMargins(0, 0, 30, 30);
-
     }
 
     @Override
@@ -198,7 +177,7 @@ public class MapFragment extends Fragment
 
         try
         {
-            MapsInitializer.initialize(getActivity().getApplicationContext());
+            MapsInitializer.initialize(Objects.requireNonNull(getActivity()).getApplicationContext());
         }
 
         catch (Exception e)
@@ -206,7 +185,7 @@ public class MapFragment extends Fragment
             e.printStackTrace();
         }
 
-        if (ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        if (ActivityCompat.checkSelfPermission(Objects.requireNonNull(getContext()), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
         {
             if (shouldShowRequestPermissionRationale( android.Manifest.permission.ACCESS_FINE_LOCATION))
             {
@@ -259,8 +238,8 @@ public class MapFragment extends Fragment
 
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults)
+    public void onRequestPermissionsResult( int requestCode,
+                                            @NonNull String permissions[], @NonNull int[] grantResults)
     {
         switch (requestCode)
         {
@@ -268,15 +247,13 @@ public class MapFragment extends Fragment
                 {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 {
-                    Toast.makeText(getActivity().getApplicationContext(), " Location Permission granted", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), " Location Permission granted", Toast.LENGTH_SHORT).show();
                     set_map();
 
                 }
 
                 else
-                {
-                    Toast.makeText(getActivity().getApplicationContext(), "Location Permission denied", Toast.LENGTH_SHORT).show();
-                }
+                    Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Location Permission denied", Toast.LENGTH_SHORT).show();
             }
         }
     }
