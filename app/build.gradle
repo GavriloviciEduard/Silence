@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "ro.keravnos.eddie.silence"
-        minSdkVersion 15
+        minSdkVersion 23
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -33,6 +33,7 @@ dependencies {
     implementation 'org.jetbrains:annotations-java5:15.0'
     implementation 'com.android.support:support-annotations:27.1.1'
     implementation 'com.google.android.gms:play-services-maps:+'
+    implementation 'com.google.android.gms:play-services-location:+'
     implementation 'com.google.android.gms:play-services-base:+'
     implementation 'com.google.android.gms:play-services-analytics:+'
 
