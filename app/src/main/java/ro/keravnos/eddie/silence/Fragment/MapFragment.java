@@ -13,7 +13,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -38,6 +41,8 @@ public class MapFragment extends Fragment
     Marker last_location_marker=null;
     LocationManager mLocationManager;
     View rootView;
+
+    PlaceAutocompleteFragment mSearchPAF;
 
     private Location getLastKnownLocation()
     {
@@ -95,7 +100,18 @@ public class MapFragment extends Fragment
 
                 googleMap = mMap;
 
+                googleMap.setMapType(2);
+
                 googleMap.setMyLocationEnabled(true);
+
+                View locationButton = ((View)mMapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+                // and next place it, on bottom right (as Google Maps app)
+                RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)
+                        locationButton.getLayoutParams();
+                // position on right bottom
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+                layoutParams.setMargins(0, 0, 30, 30);
 
 
                 Location location = getLastKnownLocation();
@@ -168,6 +184,25 @@ public class MapFragment extends Fragment
     {
 
         rootView = inflater.inflate(R.layout.fragment_map, container, false);
+
+        mSearchPAF = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+
+        /*AutocompleteFilter typeFilter = new AutocompleteFilter.Builder().setTypeFilter(AutocompleteFilter.TYPE_FILTER_ADDRESS).build();
+        mSearchPAF.setFilter(typeFilter);
+
+        mSearchPAF.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                // TODO: Get info about the selected place.
+                Log.i(TAG, "Place: " + place.getName());//get place details here
+            }
+
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                Log.i(TAG, "An error occurred: " + status);
+            }
+        });*/
 
         mMapView = rootView.findViewById(R.id.mapView);
 

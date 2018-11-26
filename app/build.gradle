@@ -34,6 +34,7 @@ dependencies {
     implementation 'com.android.support:support-annotations:27.1.1'
     implementation 'com.google.android.gms:play-services-maps:+'
     implementation 'com.google.android.gms:play-services-location:+'
+    implementation 'com.google.android.gms:play-services-places:+'
     implementation 'com.google.android.gms:play-services-base:+'
     implementation 'com.google.android.gms:play-services-analytics:+'
 
