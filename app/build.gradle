@@ -31,11 +31,11 @@ dependencies {
     implementation 'com.android.support:support-v4:28.0.0'
     implementation "com.android.support:support-compat:28.0.0"
     implementation 'org.jetbrains:annotations-java5:15.0'
-    implementation 'com.android.support:support-annotations:27.1.1'
-    implementation 'com.google.android.gms:play-services-maps:+'
-    implementation 'com.google.android.gms:play-services-location:+'
-    implementation 'com.google.android.gms:play-services-places:+'
-    implementation 'com.google.android.gms:play-services-base:+'
-    implementation 'com.google.android.gms:play-services-analytics:+'
+    implementation 'com.android.support:support-annotations:28.0.0'
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
+    implementation 'com.google.android.gms:play-services-places:16.0.0'
+    implementation 'com.google.android.gms:play-services-base:16.0.1'
+    implementation 'com.google.android.gms:play-services-analytics:16.0.5'
 
 }

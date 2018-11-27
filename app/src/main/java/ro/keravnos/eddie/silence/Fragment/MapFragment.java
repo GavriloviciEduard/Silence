@@ -4,30 +4,22 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.places.AutocompleteFilter;
-import com.google.android.gms.location.places.AutocompletePrediction;
-import com.google.android.gms.location.places.AutocompletePredictionBuffer;
 import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.Places;
-import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -38,20 +30,15 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-
 import ro.keravnos.eddie.silence.R;
 import static android.content.Context.LOCATION_SERVICE;
-import static android.support.constraint.Constraints.TAG;
-import static com.google.android.gms.location.places.AutocompleteFilter.TYPE_FILTER_ADDRESS;
+
 
 
 public class MapFragment extends Fragment
@@ -96,11 +83,31 @@ public class MapFragment extends Fragment
 
     }
 
-    public void pop_up_adress()
-    {
+    public void pop_up_adress(LatLng point) {
 
-        View win =  rootView.findViewById(R.id.down);
+        View win = rootView.findViewById(R.id.down);
         win.setVisibility(View.VISIBLE);
+
+        TextView text = rootView.findViewById(R.id.textView_adress);
+        String adress ;
+
+        Geocoder geoCoder = new Geocoder(getContext());
+        List<Address> matches = null;
+
+        try
+        {
+            matches = geoCoder.getFromLocation(point.latitude, point.longitude, 1);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        Address bestMatch = (Objects.requireNonNull(matches).isEmpty() ? null : matches.get(0));
+        adress = Objects.requireNonNull(bestMatch).toString();
+        text.setText(adress);
+
+
     }
 
     public void destroy_pop_up_adress()
@@ -113,7 +120,48 @@ public class MapFragment extends Fragment
 
     public void set_map()
     {
-        mMapView.getMapAsync(new OnMapReadyCallback() {
+
+
+        try
+        {
+            MapsInitializer.initialize(Objects.requireNonNull(getActivity()).getApplicationContext());
+        }
+
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+
+        mSearchPAF = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+        mSearchPAF.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place)
+            {
+                if(last_location_marker == null)
+                {
+                    last_location_marker = googleMap.addMarker(new MarkerOptions().position(new LatLng(place.getLatLng().latitude,place.getLatLng().longitude)).visible(true).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                    CameraPosition camera = new CameraPosition.Builder().target(new LatLng(place.getLatLng().latitude,place.getLatLng().longitude)).zoom(17).build();
+                    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(camera));
+                }
+                else
+                {
+                    last_location_marker.setPosition(new LatLng(place.getLatLng().latitude,place.getLatLng().longitude));
+                    CameraPosition camera = new CameraPosition.Builder().target(new LatLng(place.getLatLng().latitude,place.getLatLng().longitude)).zoom(17).build();
+                    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(camera));
+                }
+
+            }
+
+            @Override
+            public void onError(Status status)
+            {
+
+            }
+        });
+
+        mMapView.getMapAsync(new OnMapReadyCallback()
+        {
             @SuppressLint("MissingPermission")
             @Override
             public void onMapReady( final GoogleMap mMap )
@@ -121,18 +169,10 @@ public class MapFragment extends Fragment
 
                 googleMap = mMap;
 
-                googleMap.setMapType(2);
+                //googleMap.setMapType(2);
 
                 googleMap.setMyLocationEnabled(true);
 
-                View locationButton = ((View)mMapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
-                // and next place it, on bottom right (as Google Maps app)
-                RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)
-                        locationButton.getLayoutParams();
-                // position on right bottom
-                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
-                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-                layoutParams.setMargins(0, 0, 30, 30);
 
 
                 Location location = getLastKnownLocation();
@@ -145,7 +185,7 @@ public class MapFragment extends Fragment
                     LatLng myPosition = new LatLng(latitude, longitude);
 
 
-                    CameraPosition cameraPosition = new CameraPosition.Builder().target(myPosition).zoom(17).build();
+                    CameraPosition cameraPosition = new CameraPosition.Builder().target(myPosition).zoom(12).build();
                     googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                 }
 
@@ -162,7 +202,7 @@ public class MapFragment extends Fragment
                             last_location_marker.setPosition(point);
 
                             Toast.makeText(getContext(),"AT:-> " + point.toString(), Toast.LENGTH_LONG).show();
-                            pop_up_adress();
+                            pop_up_adress( point);
                         }
 
                         else
@@ -174,7 +214,7 @@ public class MapFragment extends Fragment
                                     .draggable(true).visible(true).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
 
                             Toast.makeText(getContext(),"AT:-> " + point.toString(), Toast.LENGTH_LONG).show();
-                            pop_up_adress();
+                            pop_up_adress(point);
 
                         }
 
@@ -198,6 +238,20 @@ public class MapFragment extends Fragment
 
 
 
+
+
+
+        View locationButton = ((View)mMapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+        // and next place it, on bottom right (as Google Maps app)
+        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)
+        locationButton.getLayoutParams();
+        // position on right bottom
+        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
+        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+        layoutParams.setMargins(0, 0, 30, 30);
+
+
+
     }
 
     @Override
@@ -213,15 +267,7 @@ public class MapFragment extends Fragment
 
         mMapView.onResume();
 
-        try
-        {
-            MapsInitializer.initialize(Objects.requireNonNull(getActivity()).getApplicationContext());
-        }
 
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
 
         if (ActivityCompat.checkSelfPermission(Objects.requireNonNull(getContext()), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
         {
@@ -237,45 +283,12 @@ public class MapFragment extends Fragment
         }
 
         else
-            {
             set_map();
-        }
 
 
-        mSearchPAF = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-        mSearchPAF.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place)
-            {
-                if(last_location_marker == null)
-                {
-                    last_location_marker = googleMap.addMarker(new MarkerOptions().position(new LatLng(place.getLatLng().latitude,place.getLatLng().longitude)).visible(true).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-                }
-                else
-                {
-                    last_location_marker.setPosition(new LatLng(place.getLatLng().latitude,place.getLatLng().longitude));
-                }
-                CameraPosition camera = new CameraPosition.Builder().target(new LatLng(place.getLatLng().latitude,place.getLatLng().longitude)).zoom(17).build();
-                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(camera));
-            }
 
-            @Override
-            public void onError(Status status)
-            {
 
-            }
-        });
 
-        /*AutocompleteFilter filter = new AutocompleteFilter.Builder()
-                .setTypeFilter(TYPE_FILTER_ADDRESS)
-                .build();
-        mSearchPAF.setFilter(filter);*/
-
-        LatLng sw = new LatLng(42.80749, -73.14697);
-        LatLng ne = new LatLng(44.98423, -71.58691);
-        LatLngBounds boundsBias = new LatLngBounds(sw, ne);
-
-        mSearchPAF.setBoundsBias(boundsBias);
         return rootView;
     }
 
