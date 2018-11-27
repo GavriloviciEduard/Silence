@@ -39,7 +39,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import ro.keravnos.eddie.silence.R;
-import static android.content.Context.LOCATION_SERVICE;
 
 
 
@@ -51,6 +50,7 @@ public class MapFragment extends Fragment
     Marker last_location_marker=null;
     LocationManager mLocationManager;
     View rootView;
+    boolean focused = false;
 
     PlaceAutocompleteFragment mSearchPAF;
 
@@ -150,10 +150,9 @@ public class MapFragment extends Fragment
 
                 googleMap = mMap;
 
-                //googleMap.setMapType(2);
+                googleMap.setMapType(2);
 
                 googleMap.setMyLocationEnabled(true);
-
 
 
                 googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener()
@@ -203,13 +202,16 @@ public class MapFragment extends Fragment
                     @Override
                     public void onLocationChanged(Location location)
                     {
-                        double latitude = location.getLatitude();
-                        double longitude = location.getLongitude();
-                        LatLng myPosition = new LatLng(latitude, longitude);
+                        if(focused == false)
+                        {
+                            focused = true;
+                            double latitude = location.getLatitude();
+                            double longitude = location.getLongitude();
+                            LatLng myPosition = new LatLng(latitude, longitude);
 
-
-                        CameraPosition cameraPosition = new CameraPosition.Builder().target(myPosition).zoom(17).build();
-                        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                            CameraPosition cameraPosition = new CameraPosition.Builder().target(myPosition).zoom(17).build();
+                            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                        }
                     }
 
                     @Override
