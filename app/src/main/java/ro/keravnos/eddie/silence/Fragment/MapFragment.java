@@ -247,7 +247,14 @@ public class MapFragment extends Fragment
             @Override
             public void onPlaceSelected(Place place)
             {
-                Marker marker = googleMap.addMarker(new MarkerOptions().position(new LatLng(place.getLatLng().latitude,place.getLatLng().longitude)).visible(true).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                if(last_location_marker == null)
+                {
+                    last_location_marker = googleMap.addMarker(new MarkerOptions().position(new LatLng(place.getLatLng().latitude,place.getLatLng().longitude)).visible(true).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                }
+                else
+                {
+                    last_location_marker.setPosition(new LatLng(place.getLatLng().latitude,place.getLatLng().longitude));
+                }
                 CameraPosition camera = new CameraPosition.Builder().target(new LatLng(place.getLatLng().latitude,place.getLatLng().longitude)).zoom(17).build();
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(camera));
             }
@@ -259,10 +266,10 @@ public class MapFragment extends Fragment
             }
         });
 
-        AutocompleteFilter filter = new AutocompleteFilter.Builder()
+        /*AutocompleteFilter filter = new AutocompleteFilter.Builder()
                 .setTypeFilter(TYPE_FILTER_ADDRESS)
                 .build();
-        mSearchPAF.setFilter(filter);
+        mSearchPAF.setFilter(filter);*/
 
         LatLng sw = new LatLng(42.80749, -73.14697);
         LatLng ne = new LatLng(44.98423, -71.58691);
