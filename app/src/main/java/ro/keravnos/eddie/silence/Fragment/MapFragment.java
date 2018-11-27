@@ -2,11 +2,13 @@ package ro.keravnos.eddie.silence.Fragment;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -51,27 +53,6 @@ public class MapFragment extends Fragment
     View rootView;
 
     PlaceAutocompleteFragment mSearchPAF;
-
-    private Location getLastKnownLocation()
-    {
-
-
-        mLocationManager = (LocationManager)Objects.requireNonNull(getContext()).getSystemService(LOCATION_SERVICE);
-        List<String> providers = mLocationManager.getProviders(true);
-        Location bestLocation = null;
-        for (String provider : providers)
-        {
-            @SuppressLint("MissingPermission") Location l = mLocationManager.getLastKnownLocation(provider);
-            if (l == null) {
-                continue;
-            }
-            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
-                // Found best last known location: %s", l);
-                bestLocation = l;
-            }
-        }
-        return bestLocation;
-    }
 
 
 
@@ -175,22 +156,6 @@ public class MapFragment extends Fragment
 
 
 
-                Location location = getLastKnownLocation();
-
-
-                if(location != null)
-                {
-                    double latitude = location.getLatitude();
-                    double longitude = location.getLongitude();
-                    LatLng myPosition = new LatLng(latitude, longitude);
-
-
-                    CameraPosition cameraPosition = new CameraPosition.Builder().target(myPosition).zoom(12).build();
-                    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                }
-
-
-
                 googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener()
                 {
 
@@ -232,6 +197,37 @@ public class MapFragment extends Fragment
                             destroy_pop_up_adress();
                     }
                 });
+
+                mLocationManager =  (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
+                LocationListener listener = new LocationListener() {
+                    @Override
+                    public void onLocationChanged(Location location)
+                    {
+                        double latitude = location.getLatitude();
+                        double longitude = location.getLongitude();
+                        LatLng myPosition = new LatLng(latitude, longitude);
+
+
+                        CameraPosition cameraPosition = new CameraPosition.Builder().target(myPosition).zoom(17).build();
+                        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    }
+
+                    @Override
+                    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                    }
+
+                    @Override
+                    public void onProviderEnabled(String provider) {
+
+                    }
+
+                    @Override
+                    public void onProviderDisabled(String provider) {
+
+                    }
+                };
+                mLocationManager.requestLocationUpdates(mLocationManager.GPS_PROVIDER, 0, 0,listener);
 
             }
         });
