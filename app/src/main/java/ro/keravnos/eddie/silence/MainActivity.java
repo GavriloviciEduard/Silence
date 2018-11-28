@@ -4,12 +4,6 @@ import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 
 import ro.keravnos.eddie.silence.Model.BottomNav;
 import ro.keravnos.eddie.silence.Model.ViewPagerAdapter;
@@ -36,7 +30,7 @@ public class MainActivity extends AppCompatActivity
         ViewPagerAdapter v =new ViewPagerAdapter(getSupportFragmentManager());
 
         BottomNav  bot = new BottomNav();
-        bot.create(v,bottomNavigationView, viewPager);
+        bot.create(this,v,bottomNavigationView, viewPager);
     }
 
 }

@@ -14,7 +14,8 @@
         android:roundIcon="@drawable/ic_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexin]gWarning">
+        tools:ignore="GoogleAppIndexin]gWarning,GoogleAppIndexingWarning"
+        android:fullBackupContent="@xml/backup_descriptor">
 
         <uses-library android:name="com.google.android.maps" android:required="true" />
         <uses-library android:name="org.apache.http.legacy" android:required="false" />

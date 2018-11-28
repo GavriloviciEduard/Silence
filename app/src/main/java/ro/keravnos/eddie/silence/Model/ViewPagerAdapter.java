@@ -1,6 +1,6 @@
 package ro.keravnos.eddie.silence.Model;
 
-import android.content.Intent;
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -37,10 +37,10 @@ public class ViewPagerAdapter extends FragmentPagerAdapter
         mFragmentList.add(fragment);
     }
 
-    static void setupViewPager( ViewPager viewPager, ViewPagerAdapter adpt )
+    static void setupViewPager( Context context, ViewPager viewPager, ViewPagerAdapter adpt )
     {
         LocationsFragment locationsFragment = new LocationsFragment();
-        MapFragment mapFragment = new MapFragment();
+        MapFragment mapFragment = new MapFragment(context);
         SettingsFragment settingsFragment = new SettingsFragment();
         adpt.addFragment(locationsFragment);
         adpt.addFragment(mapFragment);

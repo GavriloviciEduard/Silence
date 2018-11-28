@@ -1,5 +1,6 @@
 package ro.keravnos.eddie.silence.Model;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.view.ViewPager;
@@ -13,7 +14,7 @@ public class BottomNav
 
     private MenuItem prevMenuItem;
 
-    public  void create( ViewPagerAdapter v, final BottomNavigationView bottomNavigationView, final ViewPager viewPager  )
+    public  void create( Context context,ViewPagerAdapter v, final BottomNavigationView bottomNavigationView, final ViewPager viewPager  )
     {
 
         bottomNavigationView.getMenu().getItem(1).setChecked(true);
@@ -68,7 +69,7 @@ public class BottomNav
             }
         });
 
-        ViewPagerAdapter.setupViewPager(viewPager,v);
+        ViewPagerAdapter.setupViewPager(context,viewPager,v);
 
     }
 }

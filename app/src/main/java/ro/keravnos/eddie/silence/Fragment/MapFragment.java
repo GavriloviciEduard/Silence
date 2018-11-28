@@ -2,6 +2,7 @@ package ro.keravnos.eddie.silence.Fragment;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -10,10 +11,16 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,12 +58,9 @@ public class MapFragment extends Fragment
     LocationManager mLocationManager;
     View rootView;
     boolean focused = false;
+    Context BottomNavigation ;
 
     PlaceAutocompleteFragment mSearchPAF;
-
-
-
-
 
 
     public MapFragment()
@@ -64,19 +68,60 @@ public class MapFragment extends Fragment
 
     }
 
+
+
+    @SuppressLint("ValidFragment")
+    public MapFragment( Context context)
+    {
+
+        this.BottomNavigation = context;
+
+    }
+
+    public boolean isGPSEnabled(Context mContext)
+    {
+        LocationManager lm = (LocationManager)
+                mContext.getSystemService(Context.LOCATION_SERVICE);
+        return lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
+
+    private boolean isNetworkAvailable()
+    {
+        ConnectivityManager connectivityManager = (ConnectivityManager) Objects.requireNonNull(getActivity()).getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
     public void pop_up_adress(LatLng point) {
 
-        View win = rootView.findViewById(R.id.down);
+
+
+        View shadow = ((Activity) this.BottomNavigation).findViewById(R.id.bottom_navigation);
+        shadow.setVisibility(View.INVISIBLE);
+
+       View blank = ((Activity) this.BottomNavigation).findViewById(R.id.shadow);
+        blank.setVisibility(View.INVISIBLE);
+
+
+        View win = ((Activity) this.BottomNavigation).findViewById(R.id.down);
+        win.setX(0);
+        win.setY(1500);
         win.setVisibility(View.VISIBLE);
 
-        TextView text = rootView.findViewById(R.id.textView_adress);
-        String adress ;
+
+
+
+
+        TextView text = ((Activity) this.BottomNavigation).findViewById(R.id.textView_adress);
 
         Geocoder geoCoder = new Geocoder(getContext());
         List<Address> matches = null;
+        SpannableStringBuilder sb = new SpannableStringBuilder();
 
         try
         {
+            //PROBLEMATIC ARE NEVOIE MEREU NEVOIE DE NET
             matches = geoCoder.getFromLocation(point.latitude, point.longitude, 1);
         }
         catch (IOException e)
@@ -84,17 +129,84 @@ public class MapFragment extends Fragment
             e.printStackTrace();
         }
 
-        Address bestMatch = (Objects.requireNonNull(matches).isEmpty() ? null : matches.get(0));
-        adress = Objects.requireNonNull(bestMatch).toString();
-        text.setText(adress);
+        if( matches!=null )
+        {
+            if(!matches.isEmpty())
+            {
+                String address = Objects.requireNonNull(matches).get(0).getAddressLine(0); //0 to obtain first possible address
+                String city = matches.get(0).getLocality();
+                //String state = matches.get(0).getAdminArea();
+                String country = matches.get(0).getCountryName();
+                //String postalCode = matches.get(0).getPostalCode();
+
+
+                if(address!=null)
+                {
+                    sb.append(address).append(System.getProperty("line.separator"));
+                }
+
+                else if(city!=null)
+                {
+
+                    sb.append(city);
+                }
+
+                else if(country!=null)
+                {
+                    sb.append(" ").append(country);
+                }
+
+                if(sb.length()>0)
+                {
+                    // create a bold StyleSpan to be used on the SpannableStringBuilder
+                    StyleSpan b = new StyleSpan(android.graphics.Typeface.BOLD); // Span to make text bold
+
+                    // set only the name part of the SpannableStringBuilder to be bold --> 16, 16 + name.length()
+                    if(address!=null)
+                        sb.setSpan(b, 0, address.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE); // make first 4 characters Bold
+
+
+                    else if(city!=null)
+                        sb.setSpan(b, 0, city.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE); // make first 4 characters Bold
+
+
+                    else if(country!=null)
+                        sb.setSpan(b, 0, country.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE); // make first 4 characters Bold
+                }
+
+            }
+
+            else
+            {
+
+                sb.append(point.toString());
+            }
+
+        }
+
+        else
+        {
+
+            sb.append(point.toString());
+        }
+
+
+
+        text.setText(sb);
 
 
     }
 
     public void destroy_pop_up_adress()
     {
-        View win =  rootView.findViewById(R.id.down);
+        View win =  ((Activity) this.BottomNavigation).findViewById(R.id.down);
         win.setVisibility(View.INVISIBLE);
+        View shadow = ((Activity) this.BottomNavigation).findViewById(R.id.bottom_navigation);
+        shadow.setVisibility(View.VISIBLE);
+
+       View blank = ((Activity) this.BottomNavigation).findViewById(R.id.shadow);
+        blank.setVisibility(View.VISIBLE);
+
     }
 
 
@@ -119,17 +231,37 @@ public class MapFragment extends Fragment
             @Override
             public void onPlaceSelected(Place place)
             {
-                if(last_location_marker == null)
+                if(isNetworkAvailable() && isGPSEnabled(getContext()))
                 {
-                    last_location_marker = googleMap.addMarker(new MarkerOptions().position(new LatLng(place.getLatLng().latitude,place.getLatLng().longitude)).visible(true).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-                    CameraPosition camera = new CameraPosition.Builder().target(new LatLng(place.getLatLng().latitude,place.getLatLng().longitude)).zoom(17).build();
-                    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(camera));
+                    if(last_location_marker == null)
+                    {
+                        last_location_marker = googleMap.addMarker(new MarkerOptions().position(new LatLng(place.getLatLng().latitude,place.getLatLng().longitude)).visible(true).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                        CameraPosition camera = new CameraPosition.Builder().target(new LatLng(place.getLatLng().latitude,place.getLatLng().longitude)).zoom(17).build();
+                        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(camera));
+
+                        pop_up_adress(last_location_marker.getPosition());
+
+
+                    }
+                    else
+                    {
+                        last_location_marker.setPosition(new LatLng(place.getLatLng().latitude,place.getLatLng().longitude));
+                        CameraPosition camera = new CameraPosition.Builder().target(new LatLng(place.getLatLng().latitude,place.getLatLng().longitude)).zoom(17).build();
+                        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(camera));
+
+                        pop_up_adress(last_location_marker.getPosition());
+
+
+                    }
                 }
+
                 else
                 {
-                    last_location_marker.setPosition(new LatLng(place.getLatLng().latitude,place.getLatLng().longitude));
-                    CameraPosition camera = new CameraPosition.Builder().target(new LatLng(place.getLatLng().latitude,place.getLatLng().longitude)).zoom(17).build();
-                    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(camera));
+                    if(!isNetworkAvailable())
+                        Toast.makeText(getActivity(), "Internet and network is required", Toast.LENGTH_LONG).show();
+
+                    else if(!isGPSEnabled(getContext()))
+                        Toast.makeText(getActivity(), "Location services must be enabled", Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -150,7 +282,7 @@ public class MapFragment extends Fragment
 
                 googleMap = mMap;
 
-                googleMap.setMapType(2);
+                //googleMap.setMapType(2);
 
                 googleMap.setMyLocationEnabled(true);
 
@@ -161,24 +293,42 @@ public class MapFragment extends Fragment
                     @Override
                     public void onMapLongClick(LatLng point)
                     {
-                        if (last_location_marker != null)
-                        {
-                            last_location_marker.setPosition(point);
 
-                            Toast.makeText(getContext(),"AT:-> " + point.toString(), Toast.LENGTH_LONG).show();
-                            pop_up_adress( point);
+                        if(isNetworkAvailable() && isGPSEnabled(getContext()))
+                        {
+                            if (point!=null)
+                            {
+                                if (last_location_marker != null)
+                                {
+                                    last_location_marker.setPosition(point);
+
+                                    pop_up_adress(point);
+
+
+                                }
+
+                                else
+                                {
+
+                                    last_location_marker = googleMap.addMarker(new MarkerOptions().position
+                                            (new LatLng(point.latitude
+                                                    ,point.longitude))
+                                            .draggable(true).visible(true).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+
+                                    pop_up_adress(point);
+
+                                }
+                            }
                         }
+
 
                         else
                         {
+                            if(!isNetworkAvailable())
+                                Toast.makeText(getActivity(), "Internet and network is required", Toast.LENGTH_LONG).show();
 
-                            last_location_marker = googleMap.addMarker(new MarkerOptions().position
-                                    (new LatLng(point.latitude
-                                    ,point.longitude))
-                                    .draggable(true).visible(true).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-
-                            Toast.makeText(getContext(),"AT:-> " + point.toString(), Toast.LENGTH_LONG).show();
-                            pop_up_adress(point);
+                            else if(!isGPSEnabled(getContext()))
+                                Toast.makeText(getActivity(), "Location services must be enabled", Toast.LENGTH_LONG).show();
 
                         }
 
@@ -196,13 +346,13 @@ public class MapFragment extends Fragment
                             destroy_pop_up_adress();
                     }
                 });
+                mLocationManager =  (LocationManager)Objects.requireNonNull(getActivity()).getSystemService(Context.LOCATION_SERVICE);
 
-                mLocationManager =  (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
                 LocationListener listener = new LocationListener() {
                     @Override
                     public void onLocationChanged(Location location)
                     {
-                        if(focused == false)
+                        if(!focused)
                         {
                             focused = true;
                             double latitude = location.getLatitude();
@@ -229,7 +379,7 @@ public class MapFragment extends Fragment
 
                     }
                 };
-                mLocationManager.requestLocationUpdates(mLocationManager.GPS_PROVIDER, 0, 0,listener);
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,listener);
 
             }
         });
@@ -265,7 +415,9 @@ public class MapFragment extends Fragment
 
         mMapView.onResume();
 
-
+        View shadow = ((Activity) this.BottomNavigation).findViewById(R.id.shadow);//#1F000000
+        shadow.bringToFront();
+        shadow.setVisibility(View.VISIBLE);
 
         if (ActivityCompat.checkSelfPermission(Objects.requireNonNull(getContext()), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
         {
@@ -282,7 +434,6 @@ public class MapFragment extends Fragment
 
         else
             set_map();
-
 
 
 
@@ -330,13 +481,13 @@ public class MapFragment extends Fragment
                 {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 {
-                    Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), " Location Permission granted", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), " Location Permission granted", Toast.LENGTH_LONG).show();
                     set_map();
 
                 }
 
                 else
-                    Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Location Permission denied", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Location Permission denied", Toast.LENGTH_LONG).show();
             }
         }
     }
