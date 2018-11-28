@@ -98,7 +98,7 @@ public class MapFragment extends Fragment
 
 
         View shadow = ((Activity) this.BottomNavigation).findViewById(R.id.bottom_navigation);
-        shadow.setVisibility(View.INVISIBLE);
+        shadow.setVisibility(View.GONE);
 
        View blank = ((Activity) this.BottomNavigation).findViewById(R.id.shadow);
         blank.setVisibility(View.INVISIBLE);
@@ -106,7 +106,7 @@ public class MapFragment extends Fragment
 
         View win = ((Activity) this.BottomNavigation).findViewById(R.id.down);
         win.setX(0);
-        win.setY(1500);
+        win.setY(1510);
         win.setVisibility(View.VISIBLE);
 
 
@@ -407,6 +407,10 @@ public class MapFragment extends Fragment
     {
 
         rootView = inflater.inflate(R.layout.fragment_map, container, false);
+
+        //MUST HIDE BOTTOM BEFORE SETTING MAP
+        //View bottom = ((Activity) this.BottomNavigation).findViewById(R.id.bottom_navigation);
+        //bottom.setVisibility(View.GONE);
 
 
         mMapView = rootView.findViewById(R.id.mapView);
