@@ -18,12 +18,15 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +48,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+
+import ro.keravnos.eddie.silence.Model.CustomViewPager;
 import ro.keravnos.eddie.silence.R;
 
 
@@ -103,11 +108,14 @@ public class MapFragment extends Fragment
        View blank = ((Activity) this.BottomNavigation).findViewById(R.id.shadow);
         blank.setVisibility(View.INVISIBLE);
 
+        CustomViewPager swipe = ((Activity) this.BottomNavigation).findViewById(R.id.viewpager);
+        swipe.disableScroll(true);
+
 
         View win = ((Activity) this.BottomNavigation).findViewById(R.id.down);
-        win.setX(0);
-        win.setY(1510);
         win.setVisibility(View.VISIBLE);
+
+
 
 
 
@@ -207,12 +215,27 @@ public class MapFragment extends Fragment
        View blank = ((Activity) this.BottomNavigation).findViewById(R.id.shadow);
         blank.setVisibility(View.VISIBLE);
 
+        CustomViewPager swipe = ((Activity) this.BottomNavigation).findViewById(R.id.viewpager);
+        swipe.disableScroll(false);
+
     }
+
+
 
 
 
     public void set_map()
     {
+
+        Button clickButton = ((Activity) this.BottomNavigation).findViewById(R.id.buttonAD);
+        clickButton.setOnClickListener( new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                final AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.8F);
+                v.startAnimation(buttonClick);
+            }
+        });
 
 
         try
@@ -408,15 +431,10 @@ public class MapFragment extends Fragment
 
         rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
-        //MUST HIDE BOTTOM BEFORE SETTING MAP
-        //View bottom = ((Activity) this.BottomNavigation).findViewById(R.id.bottom_navigation);
-        //bottom.setVisibility(View.GONE);
-
+        //View main = ((Activity) this.BottomNavigation).findViewById(R.id.activity_main);
 
         mMapView = rootView.findViewById(R.id.mapView);
-
         mMapView.onCreate(savedInstanceState);
-
         mMapView.onResume();
 
         View shadow = ((Activity) this.BottomNavigation).findViewById(R.id.shadow);//#1F000000
