@@ -1,6 +1,7 @@
 package ro.keravnos.eddie.silence.Fragment;
 
 
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -14,17 +15,26 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 
 
+import java.util.EventListener;
+
 import ro.keravnos.eddie.silence.Model.Notifications;
 import ro.keravnos.eddie.silence.R;
 
+import ro.keravnos.eddie.silence.Model.MapTypeH;
 
 
 public class SettingsFragment extends Fragment
 {
+    MapTypeH M;
 
     public SettingsFragment()
     {
 
+    }
+
+    public SettingsFragment(MapTypeH M)
+    {
+        this.M = M;
     }
 
     @Override
@@ -91,6 +101,29 @@ public class SettingsFragment extends Fragment
 
                 }
 
+            });
+
+            final Switch sw2 = view.findViewById(R.id.maptype);
+            SharedPreferences settings2 = getActivity().getSharedPreferences("ro.keravnos.eddie.silence", 0);
+            boolean switchStateSET2 = settings.getBoolean("switchkeySETTINGS2", false);
+
+            if (switchStateSET2)//SETTINGS SWITCH
+            {
+                sw2.setChecked(false);
+            }
+
+            sw2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+            {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+                {
+                    M.setType(sw2.isChecked());
+
+                    SharedPreferences settings = getActivity().getSharedPreferences("ro.keravnos.eddie.silence", 0);
+                    SharedPreferences.Editor editor = settings.edit();
+                    editor.putBoolean("switchkeySETTINGS2", isChecked);
+                    editor.commit();
+                }
             });
 
         }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_map_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
 
 
@@ -26,13 +26,61 @@
 
     </android.support.v7.widget.CardView>
 
+    <View
+        android:id="@+id/shadow"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_above="@id/bottom_navigation"
+        android:background="@drawable/shadow"/>
+
+    <android.support.v7.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/down"
+        android:layout_width="406dp"
+        android:layout_height="80dp"
+        android:layout_alignBottom="@id/mapView"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="0dp"
+        android:visibility="invisible"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="3dp"
+        app:cardElevation="4dp"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintTop_toBottomOf="@id/mapView">
+
+
+        <TextView
+            android:id="@+id/textView_adress"
+            android:layout_width="390dp"
+            android:layout_height="39dp"
+            android:gravity="center"
+            android:textColor="#000000"
+            android:textSize="15sp"
+            android:visibility="visible"
+            tools:text="@tools:sample/cities" />
+
+        <Button
+            android:id="@+id/buttonAD"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="108dp"
+            android:layout_height="33dp"
+            android:layout_below="@id/textView_adress"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:textAllCaps="false"
+            android:text="@string/Save"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/button_round"
+            android:elevation="1dp" />
+    </android.support.v7.widget.CardView>
+
     <com.google.android.gms.maps.MapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="visible" />
-
-
-
 
 </RelativeLayout>

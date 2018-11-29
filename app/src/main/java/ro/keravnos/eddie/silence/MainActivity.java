@@ -1,5 +1,6 @@
 package ro.keravnos.eddie.silence;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.view.ViewPager;
@@ -14,10 +15,11 @@ public class MainActivity extends AppCompatActivity
 {
     public static final String CHANNEL_ID = "0" ;
     BottomNavigationView bottomNavigationView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+
+        setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -28,7 +30,7 @@ public class MainActivity extends AppCompatActivity
 
         ViewPager viewPager = findViewById(R.id.viewpager);
         bottomNavigationView =  findViewById(R.id.bottom_navigation);
-        ViewPagerAdapter v =new ViewPagerAdapter(getSupportFragmentManager());
+        ViewPagerAdapter v =new ViewPagerAdapter(getSupportFragmentManager(), this);
 
 
         BottomNav  bot = new BottomNav();

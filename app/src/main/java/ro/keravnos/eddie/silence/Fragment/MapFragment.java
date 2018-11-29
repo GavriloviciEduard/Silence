@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -15,10 +16,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
@@ -50,6 +49,7 @@ import java.util.List;
 import java.util.Objects;
 
 import ro.keravnos.eddie.silence.Model.CustomViewPager;
+import ro.keravnos.eddie.silence.Model.MapTypeH;
 import ro.keravnos.eddie.silence.R;
 
 
@@ -67,6 +67,8 @@ public class MapFragment extends Fragment
 
     PlaceAutocompleteFragment mSearchPAF;
 
+    MapTypeH M;
+
 
     public MapFragment()
     {
@@ -76,10 +78,11 @@ public class MapFragment extends Fragment
 
 
     @SuppressLint("ValidFragment")
-    public MapFragment( Context context)
+    public MapFragment( Context context, MapTypeH M)
     {
 
         this.BottomNavigation = context;
+        this.M = M;
 
     }
 
@@ -105,14 +108,14 @@ public class MapFragment extends Fragment
         View shadow = ((Activity) this.BottomNavigation).findViewById(R.id.bottom_navigation);
         shadow.setVisibility(View.GONE);
 
-       View blank = ((Activity) this.BottomNavigation).findViewById(R.id.shadow);
+       View blank = rootView.findViewById(R.id.shadow);
         blank.setVisibility(View.INVISIBLE);
 
-        CustomViewPager swipe = ((Activity) this.BottomNavigation).findViewById(R.id.viewpager);
-        swipe.disableScroll(true);
+        /*CustomViewPager swipe = ((Activity) this.BottomNavigation).findViewById(R.id.viewpager);
+        swipe.disableScroll(true);*/
 
 
-        View win = ((Activity) this.BottomNavigation).findViewById(R.id.down);
+        View win = rootView.findViewById(R.id.down);
         win.setVisibility(View.VISIBLE);
 
 
@@ -121,7 +124,7 @@ public class MapFragment extends Fragment
 
 
 
-        TextView text = ((Activity) this.BottomNavigation).findViewById(R.id.textView_adress);
+        TextView text = rootView.findViewById(R.id.textView_adress);
 
         Geocoder geoCoder = new Geocoder(getContext());
         List<Address> matches = null;
@@ -207,16 +210,16 @@ public class MapFragment extends Fragment
 
     public void destroy_pop_up_adress()
     {
-        View win =  ((Activity) this.BottomNavigation).findViewById(R.id.down);
+        View win =  rootView.findViewById(R.id.down);
         win.setVisibility(View.INVISIBLE);
-        View shadow = ((Activity) this.BottomNavigation).findViewById(R.id.bottom_navigation);
+        View shadow = ((Activity)this.BottomNavigation).findViewById(R.id.bottom_navigation);
         shadow.setVisibility(View.VISIBLE);
 
-       View blank = ((Activity) this.BottomNavigation).findViewById(R.id.shadow);
+       View blank = rootView.findViewById(R.id.shadow);
         blank.setVisibility(View.VISIBLE);
 
-        CustomViewPager swipe = ((Activity) this.BottomNavigation).findViewById(R.id.viewpager);
-        swipe.disableScroll(false);
+        /*CustomViewPager swipe = ((Activity) this.BottomNavigation).findViewById(R.id.viewpager);
+        swipe.disableScroll(false);*/
 
     }
 
@@ -227,7 +230,7 @@ public class MapFragment extends Fragment
     public void set_map()
     {
 
-        Button clickButton = ((Activity) this.BottomNavigation).findViewById(R.id.buttonAD);
+        Button clickButton = rootView.findViewById(R.id.buttonAD);
         clickButton.setOnClickListener( new View.OnClickListener() {
 
             @Override
@@ -305,9 +308,9 @@ public class MapFragment extends Fragment
 
                 googleMap = mMap;
 
-                //googleMap.setMapType(2);
-
                 googleMap.setMyLocationEnabled(true);
+
+                googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
 
                 googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener()
@@ -385,6 +388,18 @@ public class MapFragment extends Fragment
                             CameraPosition cameraPosition = new CameraPosition.Builder().target(myPosition).zoom(17).build();
                             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                         }
+
+                        boolean Sattelite = M.getType();
+                        if(Sattelite == true && googleMap.getMapType() != GoogleMap.MAP_TYPE_HYBRID)
+                        {
+                            googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                        }
+
+                        if(Sattelite == false && googleMap.getMapType() != GoogleMap.MAP_TYPE_NORMAL)
+                        {
+                            googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                        }
+
                     }
 
                     @Override
@@ -437,7 +452,7 @@ public class MapFragment extends Fragment
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
 
-        View shadow = ((Activity) this.BottomNavigation).findViewById(R.id.shadow);//#1F000000
+        View shadow = rootView.findViewById(R.id.shadow);//#1F000000
         shadow.bringToFront();
         shadow.setVisibility(View.VISIBLE);
 
