@@ -15,6 +15,7 @@ public class MainActivity extends AppCompatActivity
 {
     public static final String CHANNEL_ID = "0" ;
     BottomNavigationView bottomNavigationView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {

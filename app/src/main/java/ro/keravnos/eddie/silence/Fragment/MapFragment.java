@@ -1,6 +1,8 @@
 package ro.keravnos.eddie.silence.Fragment;
 
 import android.Manifest;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -25,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
+import android.view.animation.AnimationSet;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -47,6 +50,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import android.animation.Animator;
 
 import ro.keravnos.eddie.silence.Model.CustomViewPager;
 import ro.keravnos.eddie.silence.Model.MapTypeH;
@@ -101,13 +105,45 @@ public class MapFragment extends Fragment
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    public void pop_up_adress(LatLng point) {
+    void set_logos_positions_down()
+    {
+        View locationButton = ((View)mMapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
 
+        View googleLogo = rootView.findViewById(R.id.mapView).findViewWithTag("GoogleWatermark");
+
+
+        AnimatorSet as = new AnimatorSet();
+        as.playSequentially(ObjectAnimator.ofFloat(googleLogo, "translationY", -130f), // anim 1
+        ObjectAnimator.ofFloat(locationButton, "translationY", -118f)); // anim 2
+        as.setDuration(10);
+        as.start();
+
+    }
+
+
+    void set_logos_positions_up()
+    {
+        View locationButton = ((View)mMapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+
+        View googleLogo = rootView.findViewById(R.id.mapView).findViewWithTag("GoogleWatermark");
+
+
+        AnimatorSet as = new AnimatorSet();
+        as.playSequentially(ObjectAnimator.ofFloat(googleLogo, "translationY", -210f), // anim 1
+        ObjectAnimator.ofFloat(locationButton, "translationY", -199f)); // anim 2
+        as.setDuration(10);
+        as.start();
+    }
+
+    public void pop_up_adress(LatLng point)
+    {
+
+        set_logos_positions_up();
 
         View shadow = ((Activity) this.BottomNavigation).findViewById(R.id.bottom_navigation);
         shadow.setVisibility(View.GONE);
 
-        View blank = rootView.findViewById(R.id.shadow);
+        View blank = ((Activity) this.BottomNavigation).findViewById(R.id.shadow);
         blank.setVisibility(View.INVISIBLE);
 
         CustomViewPager swipe = ((Activity) this.BottomNavigation).findViewById(R.id.viewpager);
@@ -116,8 +152,6 @@ public class MapFragment extends Fragment
 
         View win = rootView.findViewById(R.id.down);
         win.setVisibility(View.VISIBLE);
-
-
 
 
         TextView text = rootView.findViewById(R.id.textView_adress);
@@ -208,14 +242,16 @@ public class MapFragment extends Fragment
     {
         View win =  rootView.findViewById(R.id.down);
         win.setVisibility(View.INVISIBLE);
-        View shadow = ((Activity)this.BottomNavigation).findViewById(R.id.bottom_navigation);
-        shadow.setVisibility(View.VISIBLE);
 
-        View blank = rootView.findViewById(R.id.shadow);
-        blank.setVisibility(View.VISIBLE);
+        View nav  = ((Activity) this.BottomNavigation).findViewById(R.id.bottom_navigation);
+        nav.setVisibility(View.VISIBLE);
+
+        View shadow  = ((Activity) this.BottomNavigation).findViewById(R.id.shadow);
+        shadow.setVisibility(View.VISIBLE);
 
         CustomViewPager swipe = ((Activity) this.BottomNavigation).findViewById(R.id.viewpager);
         swipe.disableScroll(false);
+        set_logos_positions_down();
 
     }
 
@@ -304,6 +340,9 @@ public class MapFragment extends Fragment
 
                 googleMap = mMap;
 
+                googleMap.getUiSettings().setMapToolbarEnabled(false);
+                googleMap.getUiSettings().setMapToolbarEnabled(false);
+
                 googleMap.setMyLocationEnabled(true);
 
                 SharedPreferences s = getActivity().getSharedPreferences("ro.keravnos.eddie.silence", 0);
@@ -333,6 +372,9 @@ public class MapFragment extends Fragment
                                 if (last_location_marker != null)
                                 {
                                     last_location_marker.setPosition(point);
+
+                                    TextView auto = rootView.findViewById(R.id.place_autocomplete_search_input);
+                                    auto.setText("");
 
                                     pop_up_adress(point);
 
@@ -433,19 +475,24 @@ public class MapFragment extends Fragment
         });
 
 
-
-
-
-
+        //buton locatie
         View locationButton = ((View)mMapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
-        // and next place it, on bottom right (as Google Maps app)
         RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)
-        locationButton.getLayoutParams();
-        // position on right bottom
+         locationButton.getLayoutParams();
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
         layoutParams.setMargins(0, 0, 30, 30);
 
+
+        //logo google
+        //View googleLogo = rootView.findViewById(R.id.mapView).findViewWithTag("GoogleWatermark");
+       // RelativeLayout.LayoutParams layoutParams1 = (RelativeLayout.LayoutParams)
+                //googleLogo.getLayoutParams();
+       // layoutParams1.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
+       // layoutParams1.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+        //layoutParams1.setMargins(0, 0, 30, 150);
+
+        set_logos_positions_down();
 
 
     }
@@ -461,9 +508,10 @@ public class MapFragment extends Fragment
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
 
-        View shadow = rootView.findViewById(R.id.shadow);//#1F000000
+
+        View shadow = ((Activity) this.BottomNavigation).findViewById(R.id.shadow);//#1F000000
         shadow.bringToFront();
-        shadow.setVisibility(View.VISIBLE);
+
 
         if (ActivityCompat.checkSelfPermission(Objects.requireNonNull(getContext()), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
         {

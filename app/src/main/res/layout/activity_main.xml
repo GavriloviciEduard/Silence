@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
@@ -9,30 +9,41 @@
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottom_navigation"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginStart="0dp"
-        android:layout_marginBottom="0dp"
         android:visibility="visible"
         app:itemBackground="@color/colorAccent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/navigation" />
 
     <View
         android:id="@+id/shadow"
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:layout_above="@id/bottom_navigation"
-        android:background="@drawable/shadow"/>
+        android:layout_width="wrap_content"
+        android:layout_height="6dp"
+        android:background="@drawable/shadow"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+        app:layout_constraintStart_toStartOf="@id/bottom_navigation"
+        app:layout_constraintBottom_toBottomOf="@id/bottom_navigation"
+        app:layout_constraintEnd_toEndOf="@id/bottom_navigation"
+        app:layout_constrainedHeight="@id/bottom_navigation"
+        app:layout_constrainedWidth="@id/bottom_navigation"
+        />
 
     <ro.keravnos.eddie.silence.Model.CustomViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/bottom_navigation"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

@@ -1,40 +1,36 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_map_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="ro.keravnos.eddie.silence.Fragment.SettingsFragment">
+    android:layout_height="match_parent">
 
     <!-- TODO: Update blank fragment layout -->
 
     <Switch
         android:id="@+id/notifications_switch"
-        android:layout_width="match_parent"
+        android:layout_width="343dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="37dp"
-        android:layout_marginLeft="40dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginRight="40dp"
+        android:layout_marginTop="32dp"
         android:checked="false"
         android:text="@string/notification_switch_description"
         android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:checked="false" />
 
     <Switch
         android:id="@+id/maptype"
-        android:layout_width="match_parent"
+        android:layout_width="343dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="37dp"
-        android:layout_marginLeft="37dp"
-        android:layout_marginTop="90dp"
-        android:layout_marginRight="40dp"
+        android:layout_marginTop="32dp"
         android:checked="false"
         android:text="@string/maptype"
         android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="@+id/notifications_switch"
+        app:layout_constraintStart_toStartOf="@+id/notifications_switch"
+        app:layout_constraintTop_toTopOf="@+id/notifications_switch"
         tools:checked="false" />
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_map_view"
     android:layout_width="match_parent"
@@ -10,11 +11,17 @@
     <android.support.v7.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/card_view"
-        android:layout_gravity="top"
-        android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="40dp"
+        android:layout_gravity="top"
+        android:layout_margin="10dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         app:cardBackgroundColor="@color/white"
+        app:layout_constraintEnd_toEndOf="@+id/mapView"
+        app:layout_constraintStart_toStartOf="@+id/mapView"
+        app:layout_constraintTop_toTopOf="parent"
         card_view:cardCornerRadius="4dp">
 
         <fragment
@@ -26,33 +33,28 @@
 
     </android.support.v7.widget.CardView>
 
-    <View
-        android:id="@+id/shadow"
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:layout_above="@id/bottom_navigation"
-        android:background="@drawable/shadow"/>
 
     <android.support.v7.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/down"
-        android:layout_width="406dp"
+        android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:layout_alignBottom="@id/mapView"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="0dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:visibility="invisible"
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="3dp"
-        app:cardElevation="4dp"
         app:cardUseCompatPadding="true"
-        app:layout_constraintTop_toBottomOf="@id/mapView">
+        app:layout_constraintBottom_toBottomOf="@+id/mapView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/mapView">
 
 
         <TextView
             android:id="@+id/textView_adress"
-            android:layout_width="390dp"
-            android:layout_height="39dp"
+            android:layout_width="match_parent"
+            android:layout_height="37dp"
             android:gravity="center"
             android:textColor="#000000"
             android:textSize="15sp"
@@ -64,18 +66,27 @@
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="108dp"
             android:layout_height="33dp"
-            android:layout_below="@id/textView_adress"
             android:layout_centerHorizontal="true"
-            android:gravity="center"
             android:layout_gravity="center"
-            android:textAllCaps="false"
-            android:text="@string/Save"
-            android:textStyle="bold"
-            android:textColor="#000000"
             android:layout_marginTop="10dp"
             android:background="@drawable/button_round"
-            android:elevation="1dp" />
+            android:elevation="1dp"
+            android:gravity="center"
+            android:text="@string/Save"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            android:textStyle="bold" />
     </android.support.v7.widget.CardView>
+
+    <ro.keravnos.eddie.silence.Model.CustomViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.gms.maps.MapView
         android:id="@+id/mapView"
@@ -83,4 +94,4 @@
         android:layout_height="match_parent"
         android:visibility="visible" />
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>
