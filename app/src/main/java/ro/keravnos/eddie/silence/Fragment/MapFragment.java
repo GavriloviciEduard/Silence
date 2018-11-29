@@ -104,22 +104,18 @@ public class MapFragment extends Fragment
     public void pop_up_adress(LatLng point) {
 
 
-
         View shadow = ((Activity) this.BottomNavigation).findViewById(R.id.bottom_navigation);
         shadow.setVisibility(View.GONE);
 
         View blank = rootView.findViewById(R.id.shadow);
         blank.setVisibility(View.INVISIBLE);
 
-        /*CustomViewPager swipe = ((Activity) this.BottomNavigation).findViewById(R.id.viewpager);
-        swipe.disableScroll(true);*/
+        CustomViewPager swipe = ((Activity) this.BottomNavigation).findViewById(R.id.viewpager);
+        swipe.disableScroll(true);
 
 
         View win = rootView.findViewById(R.id.down);
         win.setVisibility(View.VISIBLE);
-
-
-
 
 
 
@@ -218,8 +214,8 @@ public class MapFragment extends Fragment
         View blank = rootView.findViewById(R.id.shadow);
         blank.setVisibility(View.VISIBLE);
 
-        /*CustomViewPager swipe = ((Activity) this.BottomNavigation).findViewById(R.id.viewpager);
-        swipe.disableScroll(false);*/
+        CustomViewPager swipe = ((Activity) this.BottomNavigation).findViewById(R.id.viewpager);
+        swipe.disableScroll(false);
 
     }
 
@@ -313,7 +309,7 @@ public class MapFragment extends Fragment
                 SharedPreferences s = getActivity().getSharedPreferences("ro.keravnos.eddie.silence", 0);
                 boolean o = s.getBoolean("switchkeySETTINGS2",false);
 
-                if(o == false)
+                if(!o)
                 {
                     googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
                 }
@@ -403,12 +399,12 @@ public class MapFragment extends Fragment
                         SharedPreferences s = getActivity().getSharedPreferences("ro.keravnos.eddie.silence", 0);
                         boolean o = s.getBoolean("switchkeySETTINGS2",false);
 
-                        if(o == true && googleMap.getMapType() != GoogleMap.MAP_TYPE_HYBRID)
+                        if(o && googleMap.getMapType() != GoogleMap.MAP_TYPE_HYBRID)
                         {
                             googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
                         }
 
-                        if(o == false && googleMap.getMapType() != GoogleMap.MAP_TYPE_NORMAL)
+                        if(!o && googleMap.getMapType() != GoogleMap.MAP_TYPE_NORMAL)
                         {
                             googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
                         }
@@ -460,7 +456,6 @@ public class MapFragment extends Fragment
 
         rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
-        //View main = ((Activity) this.BottomNavigation).findViewById(R.id.activity_main);
 
         mMapView = rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);

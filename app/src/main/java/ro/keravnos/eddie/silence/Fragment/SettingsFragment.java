@@ -1,6 +1,7 @@
 package ro.keravnos.eddie.silence.Fragment;
 
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -16,6 +17,7 @@ import android.widget.Switch;
 
 
 import java.util.EventListener;
+import java.util.Objects;
 
 import ro.keravnos.eddie.silence.Model.Notifications;
 import ro.keravnos.eddie.silence.R;
@@ -32,7 +34,8 @@ public class SettingsFragment extends Fragment
 
     }
 
-    public SettingsFragment(MapTypeH M)
+    @SuppressLint("ValidFragment")
+    public SettingsFragment( MapTypeH M)
     {
         this.M = M;
     }
@@ -57,7 +60,7 @@ public class SettingsFragment extends Fragment
             final Switch sw = view.findViewById(R.id.notifications_switch);
 
             //LAST STATE OF SWITCH
-            SharedPreferences settings = getActivity().getSharedPreferences("ro.keravnos.eddie.silence", 0);//SETTINGS SWITCH
+            SharedPreferences settings = Objects.requireNonNull(getActivity()).getSharedPreferences("ro.keravnos.eddie.silence", 0);//SETTINGS SWITCH
             boolean switchStateSET = settings.getBoolean("switchkeySETTINGS", false);//SETTINGS SWITCH
 
 
@@ -76,6 +79,7 @@ public class SettingsFragment extends Fragment
 
 
 
+                @SuppressLint("ApplySharedPref")
                 @Override
                 public void onCheckedChanged( CompoundButton buttonView, boolean isChecked)
                 {
@@ -114,6 +118,7 @@ public class SettingsFragment extends Fragment
 
             sw2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
             {
+                @SuppressLint("ApplySharedPref")
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
                 {
