@@ -51,6 +51,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import android.animation.Animator;
+import ro.keravnos.eddie.silence.Fragment.LocationsFragment;
 
 import ro.keravnos.eddie.silence.Model.CustomViewPager;
 import ro.keravnos.eddie.silence.Model.MapTypeH;
@@ -68,10 +69,9 @@ public class MapFragment extends Fragment
     View rootView;
     boolean focused = false;
     Context BottomNavigation ;
-
     PlaceAutocompleteFragment mSearchPAF;
-
     MapTypeH M;
+    LocationsFragment locationsFragment;
 
 
     public MapFragment()
@@ -82,11 +82,12 @@ public class MapFragment extends Fragment
 
 
     @SuppressLint("ValidFragment")
-    public MapFragment( Context context, MapTypeH M)
+    public MapFragment( Context context, MapTypeH M,LocationsFragment locationsFragment)
     {
 
         this.BottomNavigation = context;
         this.M = M;
+        this.locationsFragment = locationsFragment;
 
     }
 
@@ -266,9 +267,16 @@ public class MapFragment extends Fragment
         clickButton.setOnClickListener( new View.OnClickListener() {
 
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 final AlphaAnimation buttonClick = new AlphaAnimation(1F, 0.8F);
                 v.startAnimation(buttonClick);
+
+                if(last_location_marker!=null)
+                {
+                    locationsFragment.add_location(last_location_marker.getPosition());
+                }
+
             }
         });
 

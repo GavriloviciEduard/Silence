@@ -14,7 +14,7 @@ import ro.keravnos.eddie.silence.Fragment.*;
 
 public class ViewPagerAdapter extends FragmentPagerAdapter
 {
-    static  MapTypeH M;
+    private static  MapTypeH M;
 
     private final List<Fragment> mFragmentList = new ArrayList<>();
 
@@ -44,7 +44,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter
     {
         M = new MapTypeH();
         LocationsFragment locationsFragment = new LocationsFragment();
-        MapFragment mapFragment = new MapFragment(context, M);
+        MapFragment mapFragment = new MapFragment(context, M,locationsFragment);
         SettingsFragment settingsFragment = new SettingsFragment(M);
         adpt.addFragment(locationsFragment);
         adpt.addFragment(mapFragment);
