@@ -108,7 +108,7 @@ public class MapFragment extends Fragment
         View shadow = ((Activity) this.BottomNavigation).findViewById(R.id.bottom_navigation);
         shadow.setVisibility(View.GONE);
 
-       View blank = rootView.findViewById(R.id.shadow);
+        View blank = rootView.findViewById(R.id.shadow);
         blank.setVisibility(View.INVISIBLE);
 
         /*CustomViewPager swipe = ((Activity) this.BottomNavigation).findViewById(R.id.viewpager);
@@ -215,7 +215,7 @@ public class MapFragment extends Fragment
         View shadow = ((Activity)this.BottomNavigation).findViewById(R.id.bottom_navigation);
         shadow.setVisibility(View.VISIBLE);
 
-       View blank = rootView.findViewById(R.id.shadow);
+        View blank = rootView.findViewById(R.id.shadow);
         blank.setVisibility(View.VISIBLE);
 
         /*CustomViewPager swipe = ((Activity) this.BottomNavigation).findViewById(R.id.viewpager);
@@ -310,7 +310,17 @@ public class MapFragment extends Fragment
 
                 googleMap.setMyLocationEnabled(true);
 
-                googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                SharedPreferences s = getActivity().getSharedPreferences("ro.keravnos.eddie.silence", 0);
+                boolean o = s.getBoolean("switchkeySETTINGS2",false);
+
+                if(o == false)
+                {
+                    googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                }
+                else
+                {
+                    googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                }
 
 
                 googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener()
@@ -373,6 +383,7 @@ public class MapFragment extends Fragment
                     }
                 });
                 mLocationManager =  (LocationManager)Objects.requireNonNull(getActivity()).getSystemService(Context.LOCATION_SERVICE);
+                //mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
                 LocationListener listener = new LocationListener() {
                     @Override
@@ -389,13 +400,15 @@ public class MapFragment extends Fragment
                             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                         }
 
-                        boolean Sattelite = M.getType();
-                        if(Sattelite == true && googleMap.getMapType() != GoogleMap.MAP_TYPE_HYBRID)
+                        SharedPreferences s = getActivity().getSharedPreferences("ro.keravnos.eddie.silence", 0);
+                        boolean o = s.getBoolean("switchkeySETTINGS2",false);
+
+                        if(o == true && googleMap.getMapType() != GoogleMap.MAP_TYPE_HYBRID)
                         {
                             googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
                         }
 
-                        if(Sattelite == false && googleMap.getMapType() != GoogleMap.MAP_TYPE_NORMAL)
+                        if(o == false && googleMap.getMapType() != GoogleMap.MAP_TYPE_NORMAL)
                         {
                             googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
                         }
@@ -417,6 +430,7 @@ public class MapFragment extends Fragment
 
                     }
                 };
+                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0,listener);
                 mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,listener);
 
             }

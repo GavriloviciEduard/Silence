@@ -109,7 +109,7 @@ public class SettingsFragment extends Fragment
 
             if (switchStateSET2)//SETTINGS SWITCH
             {
-                sw2.setChecked(false);
+                sw2.setChecked(true);
             }
 
             sw2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
