@@ -10,7 +10,7 @@
 
     <Switch
         android:id="@+id/notifications_switch"
-        android:layout_width="343dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:checked="false"
@@ -23,14 +23,30 @@
 
     <Switch
         android:id="@+id/maptype"
-        android:layout_width="343dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="50dp"
         android:checked="false"
         android:text="@string/maptype"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="@+id/notifications_switch"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/notifications_switch"
         app:layout_constraintTop_toTopOf="@+id/notifications_switch"
         tools:checked="false" />
+
+    <Switch
+        android:id="@+id/background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
+        android:checked="false"
+        android:text="@string/background"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="@+id/maptype"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/maptype"
+        app:layout_constraintTop_toTopOf="@+id/maptype"
+        tools:checked="false" />
+
 </android.support.constraint.ConstraintLayout>

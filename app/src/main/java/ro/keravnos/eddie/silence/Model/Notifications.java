@@ -85,8 +85,8 @@ public class Notifications extends Service {
     @Override
     public void onTaskRemoved(Intent rootIntent)
     {
-        super.onTaskRemoved(rootIntent);
+        /*super.onTaskRemoved(rootIntent);
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.cancelAll();
+        mNotificationManager.cancelAll();*/
     }
 }

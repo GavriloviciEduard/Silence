@@ -32,6 +32,7 @@
         </activity>
 
         <service android:name=".Model.Notifications"></service>
+        <service android:name=".Model.BackgroundService"></service>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
