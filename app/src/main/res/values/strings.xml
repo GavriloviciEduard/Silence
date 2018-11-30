@@ -12,4 +12,6 @@
     <string name ="notification_switch_description"><b>Show notifications</b>\nNotifications will be shown in the status bar.</string>
     <string name="maptype"><b>Map type</b>\nChange between satellite and normal.</string>
     <string name="background"><b>Run in background</b>\nAllow the app to run in background.</string>
+    <string name="snack_bar_text">Location deleted</string>
+    <string name="snack_bar_undo">UNDO</string>
 </resources>
