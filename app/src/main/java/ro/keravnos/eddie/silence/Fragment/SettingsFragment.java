@@ -53,6 +53,7 @@ public class SettingsFragment extends Fragment
 
     }
 
+    @SuppressLint("ApplySharedPref")
     @Override
     public void onActivityCreated(Bundle savedInstanceState)
     {
@@ -68,9 +69,10 @@ public class SettingsFragment extends Fragment
             //LAST STATE OF SWITCH
             SharedPreferences settings = Objects.requireNonNull(getActivity()).getSharedPreferences("ro.keravnos.eddie.silence", 0);//SETTINGS SWITCH
             boolean switchStateSET = settings.getBoolean("switchkeySETTINGS", false);//SETTINGS SWITCH
+            boolean switchStateSET3 = settings.getBoolean("switchBackground",false);
 
 
-            if (switchStateSET)//SETTINGS SWITCH
+            if (switchStateSET && switchStateSET3)//SETTINGS SWITCH
             {
                 sw.setChecked(true);
                 Notifications notf = new Notifications(getActivity().getApplicationContext());
@@ -80,48 +82,39 @@ public class SettingsFragment extends Fragment
 
             //LAST STATE OF SWITCH
 
-            sw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()//LISTENER FOR SETTINGS SWITCH
-            {
-
-
-
-                @SuppressLint("ApplySharedPref")
-                @Override
-                public void onCheckedChanged( CompoundButton buttonView, boolean isChecked)
+            //LISTENER FOR SETTINGS SWITCH
+            sw.setOnCheckedChangeListener(( buttonView, isChecked ) -> {
+                if(sw.isChecked())
                 {
-                    if(sw.isChecked())
+                    //Notifications notf = new Notifications(getActivity().getApplicationContext());
+                    //notf.createNotificationChannel();
+                    //notf.create();
+                    if(!notifStarted)
                     {
-                        Notifications notf = new Notifications(getActivity().getApplicationContext());
-                        notf.createNotificationChannel();
-                        notf.create();
-                        if(notifStarted == false)
-                        {
-                            Intent notification = new Intent(getActivity(),Notifications.class);
-                            getActivity().startService(notification);
-                            notifStarted = true;
-                        }
+                        Intent notification = new Intent(getActivity(),Notifications.class);
+                        getActivity().startService(notification);
+                        notifStarted = true;
                     }
-
-                    else
-                    {
-                        NotificationManager mNotificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-                        mNotificationManager.cancelAll();
-
-                        if(notifStarted == true)
-                        {
-                            Intent notification = new Intent(getActivity(),Notifications.class);
-                            getActivity().stopService(notification);
-                            notifStarted = false;
-                        }
-                    }
-
-                    SharedPreferences settings = getActivity().getSharedPreferences("ro.keravnos.eddie.silence", 0);
-                    SharedPreferences.Editor editor = settings.edit();
-                    editor.putBoolean("switchkeySETTINGS", isChecked);
-                    editor.commit();
-
-
                 }
+
+                else
+                {
+                    NotificationManager mNotificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+                    mNotificationManager.cancelAll();
+
+                    if(notifStarted)
+                    {
+                        Intent notification = new Intent(getActivity(),Notifications.class);
+                        getActivity().stopService(notification);
+                        notifStarted = false;
+                    }
+                }
+
+                SharedPreferences settings1 = getActivity().getSharedPreferences("ro.keravnos.eddie.silence", 0);
+                SharedPreferences.Editor editor = settings1.edit();
+                editor.putBoolean("switchkeySETTINGS", isChecked);
+                editor.commit();
+
 
             });
 
@@ -129,24 +122,27 @@ public class SettingsFragment extends Fragment
             SharedPreferences settings2 = getActivity().getSharedPreferences("ro.keravnos.eddie.silence", 0);
             boolean switchStateSET2 = settings2.getBoolean("switchkeySETTINGS2", false);
 
-            sw2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+            if (switchStateSET2)//SETTINGS SWITCH
             {
-                @SuppressLint("ApplySharedPref")
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-                {
-                    M.setType(sw2.isChecked());
+                sw2.setChecked(true);
+                Notifications notf = new Notifications(getActivity().getApplicationContext());
+                notf.createNotificationChannel();
+                notf.create();
+            }
 
-                    SharedPreferences settings = getActivity().getSharedPreferences("ro.keravnos.eddie.silence", 0);
-                    SharedPreferences.Editor editor = settings.edit();
-                    editor.putBoolean("switchkeySETTINGS2", isChecked);
-                    editor.commit();
-                }
+
+            sw2.setOnCheckedChangeListener(( buttonView, isChecked ) -> {
+                M.setType(sw2.isChecked());
+
+                SharedPreferences settings12 = getActivity().getSharedPreferences("ro.keravnos.eddie.silence", 0);
+                SharedPreferences.Editor editor = settings12.edit();
+                editor.putBoolean("switchkeySETTINGS2", isChecked);
+                editor.commit();
             });
 
             final Switch sw3 = view.findViewById(R.id.background);
-            SharedPreferences settings3 = getActivity().getSharedPreferences("ro.keravnos.eddie.silence",0);
-            boolean switchStateSET3 = settings3.getBoolean("switchBackground",false);
+
+
             if(switchStateSET3)
             {
                 sw3.setChecked(true);
@@ -158,40 +154,35 @@ public class SettingsFragment extends Fragment
                 sw.setEnabled(false);
             }
 
-            sw3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-            {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+            sw3.setOnCheckedChangeListener(( buttonView, isChecked ) -> {
+                if(sw3.isChecked())
                 {
-                    if(sw3.isChecked())
+                    sw.setEnabled(true);
+
+                    if(!backStarted)
                     {
-                        sw.setEnabled(true);
-
-                        if(backStarted == false)
-                        {
-                            Intent background = new Intent(getActivity(),BackgroundService.class);
-                            getActivity().startService(background);
-                            backStarted = true;
-                        }
+                        Intent background = new Intent(getActivity(),BackgroundService.class);
+                        getActivity().startService(background);
+                        backStarted = true;
                     }
-                    else
-                    {
-                        sw.setChecked(false);
-                        sw.setEnabled(false);
-
-                        if(backStarted == true)
-                        {
-                            Intent background = new Intent(getActivity(),BackgroundService.class);
-                            getActivity().stopService(background);
-                            backStarted = false;
-                        }
-                    }
-
-                    SharedPreferences s = getActivity().getSharedPreferences("ro.keravnos.eddie.silence", 0);
-                    SharedPreferences.Editor editor = s.edit();
-                    editor.putBoolean("switchBackground",isChecked);
-                    editor.commit();
                 }
+                else
+                {
+                    sw.setChecked(false);
+                    sw.setEnabled(false);
+
+                    if(backStarted)
+                    {
+                        Intent background = new Intent(getActivity(),BackgroundService.class);
+                        getActivity().stopService(background);
+                        backStarted = false;
+                    }
+                }
+
+                SharedPreferences s = getActivity().getSharedPreferences("ro.keravnos.eddie.silence", 0);
+                SharedPreferences.Editor editor = s.edit();
+                editor.putBoolean("switchBackground",isChecked);
+                editor.commit();
             });
 
         }

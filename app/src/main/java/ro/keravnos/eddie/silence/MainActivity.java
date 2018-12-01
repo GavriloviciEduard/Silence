@@ -1,7 +1,10 @@
 package ro.keravnos.eddie.silence;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.view.ViewPager;
@@ -17,7 +20,6 @@ public class MainActivity extends AppCompatActivity
 {
     public static final String CHANNEL_ID = "0" ;
     BottomNavigationView bottomNavigationView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -27,6 +29,9 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
+
         ViewPager viewPager = findViewById(R.id.viewpager);
         bottomNavigationView =  findViewById(R.id.bottom_navigation);
         ViewPagerAdapter v =new ViewPagerAdapter(getSupportFragmentManager(), this);
@@ -35,4 +40,8 @@ public class MainActivity extends AppCompatActivity
         BottomNav  bot = new BottomNav();
         bot.create(this,v,bottomNavigationView, viewPager);
     }
+
+
 }
+
+

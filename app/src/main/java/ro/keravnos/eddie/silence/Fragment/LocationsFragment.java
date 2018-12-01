@@ -88,13 +88,18 @@ public class LocationsFragment extends Fragment
     {
         SharedPreferences saved_locations = Objects.requireNonNull(getActivity()).getSharedPreferences("ro.keravnos.eddie.silence", 0);
         @SuppressLint("CommitPrefEdits") SharedPreferences.Editor prefsEditor = saved_locations.edit();
-        saved_locations.edit().clear().commit();
+        saved_locations.edit().remove("LOCArray").commit();
 
         Gson gson = new Gson();
         String json = gson.toJson(this.Locations);
         prefsEditor.putString("LOCArray", json);
         prefsEditor.commit();
 
+    }
+
+    public ArrayList<LatLng> get_locations()
+    {
+        return this.Locations;
     }
 
 }

@@ -217,7 +217,7 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.View
     {
         SharedPreferences saved_locations =context.getSharedPreferences("ro.keravnos.eddie.silence", 0);
         @SuppressLint("CommitPrefEdits") SharedPreferences.Editor prefsEditor = saved_locations.edit();
-        saved_locations.edit().clear().commit();
+        saved_locations.edit().remove("LOCArray").commit();
 
         Gson gson = new Gson();
         String json = gson.toJson(this.Locations);

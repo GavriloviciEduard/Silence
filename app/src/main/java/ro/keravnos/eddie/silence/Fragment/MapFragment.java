@@ -5,7 +5,10 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -14,12 +17,15 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
@@ -43,11 +49,14 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import android.animation.Animator;
@@ -57,6 +66,7 @@ import ro.keravnos.eddie.silence.Model.CustomViewPager;
 import ro.keravnos.eddie.silence.Model.MapTypeH;
 import ro.keravnos.eddie.silence.R;
 
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 
 public class MapFragment extends Fragment
@@ -64,6 +74,7 @@ public class MapFragment extends Fragment
     public MapView mMapView;
     public GoogleMap googleMap;
     public static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
+    public static final int RC_ACCESS_NOTIFICATION_POLICY = 2;
     Marker last_location_marker=null;
     LocationManager mLocationManager;
     View rootView;
@@ -71,12 +82,14 @@ public class MapFragment extends Fragment
     Context BottomNavigation ;
     PlaceAutocompleteFragment mSearchPAF;
     MapTypeH M;
-    LocationsFragment locationsFragment;
+    final LocationsFragment locationsFragment;
+    NotificationManager Granted;
 
 
     public MapFragment()
     {
 
+        locationsFragment = null;
     }
 
 
@@ -262,6 +275,17 @@ public class MapFragment extends Fragment
 
     public void set_map()
     {
+        Granted = (NotificationManager) Objects.requireNonNull(getActivity()).getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if( Build.VERSION.SDK_INT >= 23)
+        {
+
+            if(! Granted.isNotificationPolicyAccessGranted())
+            {
+                alert();
+            }
+        }
+
 
         Button clickButton = rootView.findViewById(R.id.buttonAD);
         clickButton.setOnClickListener( new View.OnClickListener() {
@@ -274,7 +298,7 @@ public class MapFragment extends Fragment
 
                 if(last_location_marker!=null)
                 {
-                    locationsFragment.add_location(last_location_marker.getPosition());
+                    Objects.requireNonNull(locationsFragment).add_location(last_location_marker.getPosition());
                 }
 
             }
@@ -435,16 +459,54 @@ public class MapFragment extends Fragment
                     @Override
                     public void onLocationChanged(Location location)
                     {
+
+                        LatLng myPosition = null;
+                        Granted = (NotificationManager) getActivity().getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
                         if(!focused)
                         {
                             focused = true;
                             double latitude = location.getLatitude();
                             double longitude = location.getLongitude();
-                            LatLng myPosition = new LatLng(latitude, longitude);
+                            myPosition = new LatLng(latitude, longitude);
 
                             CameraPosition cameraPosition = new CameraPosition.Builder().target(myPosition).zoom(17).build();
                             googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                         }
+
+
+                        if(myPosition!=null && Granted.isNotificationPolicyAccessGranted())
+                        {
+                            ArrayList<LatLng> Locations =  Objects.requireNonNull(locationsFragment).get_locations();
+
+                            for(LatLng L : Locations)
+                            {
+
+                                Location locationA = new Location("point A");
+
+                                locationA.setLatitude(myPosition.latitude);
+                                locationA.setLongitude(myPosition.longitude);
+
+                                Location locationB = new Location("point B");
+
+                                locationB.setLatitude(L.latitude);
+                                locationB.setLongitude(L.longitude);
+
+                                float distance = locationA.distanceTo(locationB);
+
+
+                                    if(distance<=250)
+                                    {
+                                        AudioManager am = (AudioManager) getActivity().getBaseContext().getSystemService(Context.AUDIO_SERVICE);
+                                        am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+
+                                        Toast ms = Toast.makeText(getActivity().getApplicationContext(),"Silenced",Toast.LENGTH_LONG);
+                                        ms.show();
+                                    }
+
+                            }
+                        }
+
 
                         SharedPreferences s = getActivity().getSharedPreferences("ro.keravnos.eddie.silence", 0);
                         boolean o = s.getBoolean("switchkeySETTINGS2",false);
@@ -458,6 +520,8 @@ public class MapFragment extends Fragment
                         {
                             googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
                         }
+
+
 
                     }
 
@@ -521,6 +585,7 @@ public class MapFragment extends Fragment
         shadow.bringToFront();
 
 
+
         if (ActivityCompat.checkSelfPermission(Objects.requireNonNull(getContext()), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
         {
             if (shouldShowRequestPermissionRationale( android.Manifest.permission.ACCESS_FINE_LOCATION))
@@ -534,6 +599,7 @@ public class MapFragment extends Fragment
             }
         }
 
+
         else
             set_map();
 
@@ -543,6 +609,21 @@ public class MapFragment extends Fragment
         return rootView;
     }
 
+    void alert() {
+        new AlertDialog.Builder(getContext())
+                .setTitle("Do Not Disturb access required")
+                .setMessage("Please give permission on the next screen for app to work properly")
+                .setCancelable(false)
+                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick( DialogInterface dialog, int which )
+                    {
+                        Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                        startActivity(intent);
+                    }
+                }).show();
+
+    }
 
     @Override
     public void onResume()
@@ -573,6 +654,7 @@ public class MapFragment extends Fragment
     }
 
 
+
     @Override
     public void onRequestPermissionsResult( int requestCode,
                                             @NonNull String permissions[], @NonNull int[] grantResults)
@@ -581,16 +663,20 @@ public class MapFragment extends Fragment
         {
             case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION :
                 {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED )
                 {
                     Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), " Location Permission granted", Toast.LENGTH_LONG).show();
                     set_map();
-
                 }
 
                 else
                     Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Location Permission denied", Toast.LENGTH_LONG).show();
-            }
+
+
+              }
+
+
+
         }
     }
 

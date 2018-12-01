@@ -5,6 +5,8 @@
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY"/>
+
 
     <application
 
@@ -31,8 +33,11 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".Model.Notifications"></service>
-        <service android:name=".Model.BackgroundService"></service>
+        <service android:name=".Model.Notifications"
+            tools:ignore="InnerclassSeparator"></service>
+
+        <service android:name=".Model.BackgroundService"
+            tools:ignore="InnerclassSeparator"></service>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
